@@ -7,6 +7,7 @@
 
 #include <bit>
 #include <cstdint>
+#include <iostream>
 #include "types.hpp"
 
 struct BitBoard {
@@ -32,15 +33,17 @@ struct BitBoard {
     }
 
     struct Iterator {
-        uint64_t i_board;
+        std::uint64_t i_board;
         constexpr explicit Iterator(std::uint64_t x) : i_board(x) {}
         constexpr Square operator*() const { return static_cast<Square>(std::countr_zero(i_board)); }
-        constexpr Iterator& operator++() {i_board &= i_board - 1; return *this;}
+        constexpr Iterator& operator++() { i_board &= i_board - 1; return *this; }
+        constexpr bool operator==(const Iterator& other) const { return i_board == other.i_board; }
+        constexpr bool operator!=(const Iterator& other) const { return i_board != other.i_board; }
     };
 
     constexpr Iterator begin() const { return Iterator(board); }
-    static constexpr Iterator end() { return Iterator(0ull); }
-    };
+    constexpr Iterator end() const { return Iterator(0ull); }
+};
 
 inline std::ostream& operator<<(std::ostream& os, const BitBoard bb) {
     for (int rank = 7; rank >= 0; rank--) {
